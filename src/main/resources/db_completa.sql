@@ -44,4 +44,11 @@ VALUES
 	('ORONOZ','COMERCIAL',22000, 2, 2),
 	('LERTXUNDI','COMERCIAL',21900, 3, 1);
 
-    
+
+CREATE TABLE users (
+  id int NOT NULL AUTO_INCREMENT,
+  email varchar(50) NOT NULL,
+  password varchar(64) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY (email)
+)
