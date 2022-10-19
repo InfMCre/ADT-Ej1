@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.user.AuthRequest;
@@ -25,6 +26,7 @@ import com.example.demo.service.user.UserService;
 
 
 @RestController
+@RequestMapping("api")
 public class AuthController {
 	
 	@Autowired 

@@ -69,8 +69,8 @@ public class WebSecurityConfig {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		
 		http.authorizeRequests()
-			.antMatchers("/auth/login").permitAll()
-			.antMatchers("/auth/signup").permitAll()
+			.antMatchers("/api/auth/login").permitAll()
+			.antMatchers("/api/auth/signup").permitAll()
 			.anyRequest().authenticated(); // las demás requiere autenticacion
 		
 		// control de la excepcion : --> Devolver Unauthorized --> 401
