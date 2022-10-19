@@ -51,4 +51,36 @@ CREATE TABLE users (
   password varchar(64) NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY (email)
-)
+);
+
+# DROP TABLE IF EXISTS SALES;
+CREATE TABLE SALES (
+	id INT PRIMARY KEY AUTO_INCREMENT, 
+    saleDate DATE, 
+    amount INT,
+    employeeId INT,
+    CONSTRAINT fk_employeeId_employee_id FOREIGN KEY (employeeId) REFERENCES employees(id)
+);
+
+INSERT INTO sales 
+	(saleDate, amount, employeeId) 
+VALUES 
+	('2022-10-01', 20000, 1),
+    ('2022-10-01', 25000, 2),
+    ('2022-10-01', 17000, 3),
+    ('2022-10-02', 18000, 3),
+    ('2022-10-02', 30000, 5),
+    ('2022-10-03', 15000, 6),
+    ('2022-10-03', 21000, 6),
+    ('2022-10-04', 25000, 1),
+    ('2022-10-04', 17000, 1),
+    ('2022-10-04', 22000, 5),
+    ('2022-10-10', 25000, 5),
+    ('2022-10-10', 14000, 6),
+    ('2022-10-10', 23500, 6),
+    ('2022-10-11', 21000, 5),
+    ('2022-10-11', 19500, 5),
+    ('2022-10-12', 20000, 6),
+    ('2022-10-13', 25000, 6),
+    ('2022-10-14', 17000, 1);
+    
