@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.example.demo.exceptions.NotFoundConstraintException;
+import com.example.demo.exceptions.EmployeeNotFoundException;
 import com.example.demo.model.employee.Employee;
 import com.example.demo.model.employee.EmployeePostRequest;
 import com.example.demo.model.employee.EmployeeServiceResponse;
@@ -35,24 +38,32 @@ public class EmployeeController {
 	
 	@GetMapping("/employees/{id}")
 	public ResponseEntity<EmployeeServiceResponse> getEmployeeById(@PathVariable("id") long id) {
-		EmployeeServiceResponse response = employeeService.getEmployeeById(id);
-		if (response == null) {
-			return new ResponseEntity<EmployeeServiceResponse>(HttpStatus.NO_CONTENT);
+		EmployeeServiceResponse response;
+		try {
+			response = employeeService.getEmployeeById(id);
+			return new ResponseEntity<EmployeeServiceResponse>(response, HttpStatus.OK);
+		} catch (EmployeeNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NO_CONTENT, e.getMessage(), e);
 		}
-		return new ResponseEntity<EmployeeServiceResponse>(response, HttpStatus.OK);
 	}
 	
 	@PostMapping("/employees")
 	public ResponseEntity<Integer> createEmployee(@Valid @RequestBody EmployeePostRequest employeePostRequest) {
 		
-		Employee employee = new Employee(
-				employeePostRequest.getName(), 
-				employeePostRequest.getPosition(), 
-				employeePostRequest.getSalary(),
-				employeePostRequest.getBossId(), 
-				employeePostRequest.getDepartmentId()
-		);
-		return new ResponseEntity<Integer>(employeeService.createEmployee(employee), HttpStatus.CREATED);
+		
+		try {
+			Employee employee = new Employee(
+					employeePostRequest.getName(), 
+					employeePostRequest.getPosition(), 
+					employeePostRequest.getSalary(),
+					employeePostRequest.getBossId(), 
+					employeePostRequest.getDepartmentId()
+			);
+			return new ResponseEntity<Integer>(employeeService.createEmployee(employee), HttpStatus.CREATED);
+		} catch (NotFoundConstraintException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+		}
+
 	}
 	
 	@PutMapping("/employees/{id}")
@@ -76,11 +87,13 @@ public class EmployeeController {
 	
 	@GetMapping("/employees/{id}/boss")
 	public ResponseEntity<EmployeeServiceResponse> getEmployeeWithBoss(@PathVariable("id") long id) {
-		EmployeeServiceResponse response = employeeService.getEmployeeWithBoss(id);
-		if (response == null) {
-			return new ResponseEntity<EmployeeServiceResponse>(HttpStatus.NO_CONTENT);
+		EmployeeServiceResponse response;
+		try {
+			response = employeeService.getEmployeeWithBoss(id);
+			return new ResponseEntity<EmployeeServiceResponse>(response, HttpStatus.OK);
+		} catch (EmployeeNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NO_CONTENT, e.getMessage(), e);
 		}
-		return new ResponseEntity<EmployeeServiceResponse>(response, HttpStatus.OK);
 	}
 	
 }

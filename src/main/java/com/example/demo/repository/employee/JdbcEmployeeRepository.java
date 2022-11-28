@@ -3,11 +3,14 @@ package com.example.demo.repository.employee;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.demo.exceptions.NotFoundConstraintException;
+import com.example.demo.exceptions.EmployeeNotFoundException;
 import com.example.demo.model.employee.Employee;
 
 
@@ -23,26 +26,29 @@ public class JdbcEmployeeRepository implements EmployeeRepository {
 	}
 
 	@Override
-	public Employee findById(long id) {
+	public Employee findById(long id) throws EmployeeNotFoundException {
 		try {
 			return jdbcTemplate.queryForObject("Select * from employees WHERE id = ?", BeanPropertyRowMapper.newInstance(Employee.class), id);
 		} catch (EmptyResultDataAccessException e){
-			// no queremos que suelte una excepción si no hay elementos
-			return null;
+			throw new EmployeeNotFoundException("Employee Not Found in Repository");
 		}
 	}
 
 	@Override
-	public int create(Employee employee) {
-		return jdbcTemplate.update("INSERT INTO employees (name, position, salary, bossId, departmentId) VALUES (?, ?, ?, ?, ?)",
-			new Object[] { 
-				employee.getName(), 
-				employee.getPosition(), 
-				employee.getSalary(), 
-				employee.getBossId(), 
-				employee.getDepartmentId() 
-			}	
-		);
+	public int create(Employee employee) throws NotFoundConstraintException {
+		try {
+			return jdbcTemplate.update("INSERT INTO employees (name, position, salary, bossId, departmentId) VALUES (?, ?, ?, ?, ?)",
+				new Object[] { 
+					employee.getName(), 
+					employee.getPosition(), 
+					employee.getSalary(), 
+					employee.getBossId(), 
+					employee.getDepartmentId() 
+				}	
+			);
+		} catch (DataIntegrityViolationException e) {
+			throw new NotFoundConstraintException(e.getCause().getMessage());
+		}
 	}
 
 	@Override

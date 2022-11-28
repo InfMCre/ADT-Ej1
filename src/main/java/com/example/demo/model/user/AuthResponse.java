@@ -1,6 +1,7 @@
 package com.example.demo.model.user;
 
 public class AuthResponse {
+	
 	private String email;
 	private String accessToken;
 

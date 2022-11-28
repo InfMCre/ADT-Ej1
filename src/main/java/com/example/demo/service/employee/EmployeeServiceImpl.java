@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exceptions.NotFoundConstraintException;
+import com.example.demo.exceptions.EmployeeNotFoundException;
 import com.example.demo.model.employee.Employee;
 import com.example.demo.model.employee.EmployeeServiceResponse;
 import com.example.demo.repository.employee.EmployeeRepository;
@@ -36,7 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public EmployeeServiceResponse getEmployeeById(long id) {
+	public EmployeeServiceResponse getEmployeeById(long id) throws EmployeeNotFoundException {
 		Employee employee = employeeRepository.findById(id);
 		if (employee == null) {
 			return null;
@@ -52,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public int createEmployee(Employee employee) {
+	public int createEmployee(Employee employee) throws NotFoundConstraintException {
 		return employeeRepository.create(employee);
 	}
 
@@ -67,12 +69,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public EmployeeServiceResponse getEmployeeWithBoss(long id) {
+	public EmployeeServiceResponse getEmployeeWithBoss(long id) throws EmployeeNotFoundException {
 		EmployeeServiceResponse employee = getEmployeeById(id);
-		if (employee == null) {
-			return null;
-		}
-		
+
 		if (employee.getBossId() != null) {
 			EmployeeServiceResponse boss = getEmployeeById(employee.getBossId());
 			employee.setBoss(boss);
